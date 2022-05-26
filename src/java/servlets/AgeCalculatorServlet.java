@@ -26,7 +26,9 @@ public class AgeCalculatorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        
+        //Loading JSP file
+        getServletContext().getRequestDispatcher("/WEB-INF/agecalculator.jsp").forward(request, response);
+        return;
     }
 
     /**
@@ -41,5 +43,39 @@ public class AgeCalculatorServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        //Capture age parameter
+        String age = request.getParameter("age");
+        
+        //Validating age input
+        if(age == null || age.equals("")) {
+            String errorMessage = "You must give your current age.";
+            request.setAttribute("message", errorMessage);
+        } else {
+            //Parsing to integer form and detecting if proper data type
+            try {
+                int ageNum = Integer.parseInt(age);
+                ageNum = incAge(ageNum);
+                
+                String ageCalcMessage = "Your age next birthday will be " + ageNum;
+                request.setAttribute("message", ageCalcMessage);
+                
+            } catch (NumberFormatException e) {
+                String errorMessage = "You must enter a number.";
+                request.setAttribute("message", errorMessage);
+            }
+        }
+        
+        getServletContext().getRequestDispatcher("/WEB-INF/agecalculator.jsp").forward(request, response);
+        return;
+    }
+    
+    /**
+     * Increments the supplied age by one
+     * 
+     * @param age
+     * @return supplied age plus one
+     */
+    private int incAge(int age) {
+        return ++age;
     }
 }
